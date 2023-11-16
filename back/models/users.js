@@ -5,7 +5,7 @@ const userSchema = mongoose.Schema({
   surname: String,
   email: String,
   password: String,
-  creationDate: Date,
+  creationDate: { type: Date, default: Date.now },
 });
 
 const Todo = mongoose.model("users", userSchema);

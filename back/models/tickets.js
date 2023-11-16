@@ -4,7 +4,7 @@ const ticketSchema = mongoose.Schema({
   title: String,
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
   surname: String,
-  creationDate: Date,
+  creationDate: String,
   problem: String,
   priority: String,
   status: String,

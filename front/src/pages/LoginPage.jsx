@@ -7,7 +7,6 @@ function LoginPage() {
     surname: "",
     email: "",
     password: "",
-    creationDate: new Date().toDateString(),
   });
   console.log(formInfo);
 

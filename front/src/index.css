@@ -1,0 +1,7 @@
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  background-color: #97f0cf;
+}

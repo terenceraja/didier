@@ -8,18 +8,24 @@ function LoginPage() {
     email: "",
     password: "",
   });
-  console.log(formInfo);
+  const [error, setError] = useState(null);
+  console.log(error);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("click");
     fetch("http://localhost:3000/users/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formInfo),
     })
       .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
+      .then((response) => {
+        if (response.error) {
+          setError(response.message);
+        } else {
+          console.log(response);
+        }
       });
   };
 
@@ -89,6 +95,7 @@ function LoginPage() {
             Submit
           </button>
         </form>
+        {error && <span className="text-red-400">{error}</span>}
       </div>
     </div>
   );

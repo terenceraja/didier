@@ -23,6 +23,7 @@ function LoginPage() {
       .then((response) => {
         if (response.error) {
           setError(response.message);
+          console.log(response.message);
         } else {
           console.log(response);
         }
@@ -91,7 +92,10 @@ function LoginPage() {
             />
           </div>
 
-          <button className="h-10 font-bold bg-[#97f0cf]  " type="submit">
+          <button
+            className="cursor-pointer hover:bg-green-400 h-10 font-bold bg-[#97f0cf]  "
+            type="submit"
+          >
             Submit
           </button>
         </form>

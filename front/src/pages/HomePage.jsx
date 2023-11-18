@@ -2,10 +2,68 @@ import { useState } from "react";
 // import reactLogo from "./assets/react.svg";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
+import { Dropdown } from "primereact/dropdown";
+import { InputTextarea } from "primereact/inputtextarea";
 
 function HomePage() {
   const [visible, setVisible] = useState(false);
   const [position, setPosition] = useState("center");
+  const [ticketForm, setTicketForm] = useState({
+    title: "String",
+    ticketNumber: null,
+    surname: "",
+    problem: "",
+    priority: "",
+    status: "",
+  });
+  console.log(ticketForm);
+  const [priorityState, setPriorityState] = useState("");
+  const priorities = [
+    { name: "CRITICAL" },
+    { name: "HIGH PRIORITY" },
+    { name: "MEDIUM PRIORITY" },
+    { name: "LOW PRIORITY" },
+    { name: "MINIMAL PRIORITY" },
+  ];
+
+  const [statusState, setStatusState] = useState("");
+  const status = [
+    { name: "OPEN" },
+    { name: "IN PROGRESS" },
+    { name: "CLOSED" },
+  ];
+
+  const handleOnChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setTicketForm((prev) => {
+      return { ...prev, [name]: value };
+    });
+  };
+
+  const handleGenerate = () => {
+    const minm = 100000;
+    const maxm = 999999;
+    const number = Math.floor(Math.random() * (maxm - minm + 1)) + minm;
+    setTicketForm((prev) => {
+      return { ...prev, ["ticketNumber"]: number };
+    });
+  };
+
+  const handleDropSelect1 = (e) => {
+    setPriorityState(e.target.value);
+    setTicketForm((prev) => {
+      return { ...prev, ["priority"]: e.target.value.name };
+    });
+  };
+
+  const handleDropSelect2 = (e) => {
+    setStatusState(e.target.value);
+    setTicketForm((prev) => {
+      return { ...prev, ["status"]: e.target.value.name };
+    });
+  };
+  console.log("haha", ticketForm.status);
   const footerContent = (
     <div>
       <Button
@@ -27,7 +85,7 @@ function HomePage() {
     setPosition(position);
     setVisible(true);
   };
-
+  const [value, setValue] = useState("");
   return (
     <div
       id="mainContainer"
@@ -53,15 +111,62 @@ function HomePage() {
         draggable={false}
         resizable={false}
       >
-        <p className="m-0">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </p>
+        <div id="inputContainer" className="flex flex-col gap-1">
+          <label>Title</label>
+          <input
+            className="h-10 p-5"
+            type="text"
+            name="title"
+            onChange={handleOnChange}
+            required
+          />
+        </div>
+
+        <div id="inputContainer&button" className="flex flex-col ">
+          <label>Title</label>
+          <div id="inputContainer" className="flex">
+            <input
+              className="h-10 p-5"
+              type="text"
+              name="title"
+              value={ticketForm.ticketNumber}
+              placeholder="Generate a Number..."
+              required
+              readOnly
+            />
+            <Button
+              label="Generate"
+              icon="pi pi-arrow-right"
+              onClick={handleGenerate}
+              className="p-button-help text-center h-15 w-30 flex justify-center"
+            />
+          </div>
+        </div>
+        <InputTextarea
+          autoResize
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          rows={8}
+          cols={60}
+        />
+
+        <Dropdown
+          value={priorityState}
+          onChange={(e) => handleDropSelect1(e)}
+          options={priorities}
+          optionLabel="name"
+          placeholder="Select a Priority"
+          className="w-full md:w-14rem"
+        />
+
+        <Dropdown
+          value={statusState}
+          onChange={(e) => handleDropSelect2(e)}
+          options={status}
+          optionLabel="name"
+          placeholder="Select a Status"
+          className="w-full md:w-14rem"
+        />
       </Dialog>
     </div>
   );

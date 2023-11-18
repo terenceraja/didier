@@ -3,26 +3,18 @@ var router = express.Router();
 require("../models/connection");
 const userSchema = require("../validations/userValidation.js");
 const User = require("../models/users");
-
+const validatePayload = require("../middleware/validator");
 // Create User
-router.post("/create", async (req, res) => {
-  try {
-    let response = await userSchema.validateAsync(req.body);
-
-    let mongoResponse = await User.findOne({ email: response.email });
-
-    if (mongoResponse === null) {
-      const newUser = new User(req.body);
-      const savedUser = await newUser.save();
-      res.status(200).json({ message: "User is registered!", data: savedUser });
-    } else {
-      res.json({ message: "User already exists!" });
-    }
-  } catch (error) {
-    console.error("User validation error:", error);
+router.post("/create", validatePayload(userSchema), async (req, res) => {
+  let mongoResponse = await User.findOne({ email: response.email });
+  if (mongoResponse === null) {
+    const newUser = new User(req.body);
+    const savedUser = await newUser.save();
+    res.status(200).json({ message: "User is registered!", data: savedUser });
+  } else {
     res
-      .status(400)
-      .json({ error: "Validation failed", message: error.message });
+      .status(200)
+      .json({ error: "Data base check", message: "User already exists!" });
   }
 });
 

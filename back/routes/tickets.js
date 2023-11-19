@@ -3,10 +3,10 @@ var router = express.Router();
 require("../models/connection");
 const userSchema = require("../validations/userValidation.js");
 const User = require("../models/users");
-const validateUserPayload = require("../middleware/userValidator.js");
+const validateTicketPayload = require("../middleware/userValidator.js");
 
 // Create User
-router.post("/create", validateUserPayload(userSchema), async (req, res) => {
+router.post("/create", validateTicketPayload(userSchema), async (req, res) => {
   let mongoResponse = await User.findOne({ email: response.email });
   if (mongoResponse === null) {
     const newUser = new User(req.body);

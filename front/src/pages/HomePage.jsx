@@ -2,36 +2,24 @@ import { useState } from "react";
 // import reactLogo from "./assets/react.svg";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
-import { Dropdown } from "primereact/dropdown";
-import { InputTextarea } from "primereact/inputtextarea";
 
 function HomePage() {
   const [visible, setVisible] = useState(false);
   const [position, setPosition] = useState("center");
   const [ticketForm, setTicketForm] = useState({
-    title: "String",
-    ticketNumber: null,
+    title: "",
+    ticketNumber: "",
     surname: "",
     problem: "",
     priority: "",
     status: "",
   });
   console.log(ticketForm);
-  const [priorityState, setPriorityState] = useState("");
-  const priorities = [
-    { name: "CRITICAL" },
-    { name: "HIGH PRIORITY" },
-    { name: "MEDIUM PRIORITY" },
-    { name: "LOW PRIORITY" },
-    { name: "MINIMAL PRIORITY" },
-  ];
 
-  const [statusState, setStatusState] = useState("");
-  const status = [
-    { name: "OPEN" },
-    { name: "IN PROGRESS" },
-    { name: "CLOSED" },
-  ];
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("submit");
+  };
 
   const handleOnChange = (e) => {
     const name = e.target.name;
@@ -50,42 +38,11 @@ function HomePage() {
     });
   };
 
-  const handleDropSelect1 = (e) => {
-    setPriorityState(e.target.value);
-    setTicketForm((prev) => {
-      return { ...prev, ["priority"]: e.target.value.name };
-    });
-  };
-
-  const handleDropSelect2 = (e) => {
-    setStatusState(e.target.value);
-    setTicketForm((prev) => {
-      return { ...prev, ["status"]: e.target.value.name };
-    });
-  };
-  console.log("haha", ticketForm.status);
-  const footerContent = (
-    <div>
-      <Button
-        label="Cancel"
-        icon="pi pi-times"
-        onClick={() => setVisible(false)}
-        className="p-button-text"
-      />
-      <Button
-        label="Create"
-        icon="pi pi-check"
-        onClick={() => setVisible(false)}
-        autoFocus
-      />
-    </div>
-  );
-
   const show = (position) => {
     setPosition(position);
     setVisible(true);
   };
-  const [value, setValue] = useState("");
+
   return (
     <div
       id="mainContainer"
@@ -107,66 +64,108 @@ function HomePage() {
         position={position}
         style={{ width: "50vw" }}
         onHide={() => setVisible(false)}
-        footer={footerContent}
         draggable={false}
         resizable={false}
       >
-        <div id="inputContainer" className="flex flex-col gap-1">
-          <label>Title</label>
-          <input
-            className="h-10 p-5"
-            type="text"
-            name="title"
-            onChange={handleOnChange}
-            required
-          />
-        </div>
-
-        <div id="inputContainer&button" className="flex flex-col ">
-          <label>Title</label>
-          <div id="inputContainer" className="flex">
+        <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+          <div id="inputContainer" className="flex flex-col gap-1">
+            <label>Title</label>
             <input
               className="h-10 p-5"
               type="text"
               name="title"
-              value={ticketForm.ticketNumber}
-              placeholder="Generate a Number..."
+              onChange={handleOnChange}
               required
-              readOnly
-            />
-            <Button
-              label="Generate"
-              icon="pi pi-arrow-right"
-              onClick={handleGenerate}
-              className="p-button-help text-center h-15 w-30 flex justify-center"
             />
           </div>
-        </div>
-        <InputTextarea
-          autoResize
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          rows={8}
-          cols={60}
-        />
 
-        <Dropdown
-          value={priorityState}
-          onChange={(e) => handleDropSelect1(e)}
-          options={priorities}
-          optionLabel="name"
-          placeholder="Select a Priority"
-          className="w-full md:w-14rem"
-        />
+          <div id="inputContainer&button" className="flex flex-col ">
+            <label>Ticket Number</label>
+            <div id="inputContainer" className="flex">
+              <input
+                className="h-10 p-5"
+                type="text"
+                name="title"
+                onChange={handleOnChange}
+                value={ticketForm.ticketNumber}
+                placeholder="Generate a Number..."
+                required
+              />
+              <button
+                className="cursor-pointer hover:bg-green-400 h-10 font-bold bg-[#97f0cf]  "
+                onClick={handleGenerate}
+                type="button"
+              >
+                Generate
+              </button>
+            </div>
+          </div>
+          <div id="inputContainer" className="flex flex-col gap-1">
+            <label>Problem</label>
+            <textarea
+              className="p-2"
+              onChange={handleOnChange}
+              required
+              name="problem"
+              rows="5"
+              cols="33"
+              value={ticketForm.problem}
+            >
+              Describe the problem
+            </textarea>
+          </div>
 
-        <Dropdown
-          value={statusState}
-          onChange={(e) => handleDropSelect2(e)}
-          options={status}
-          optionLabel="name"
-          placeholder="Select a Status"
-          className="w-full md:w-14rem"
-        />
+          <div id="inputContainer" className="flex flex-col gap-1">
+            <label>Priority</label>
+            <select
+              required
+              onChange={handleOnChange}
+              name="priority"
+              className="p-2"
+            >
+              <option value="">Select an option</option>
+
+              <option value="critical">CRITICAL</option>
+              <option value="high">HIGH PRIORITY</option>
+              <option value="medium">MEDIUM PRIORITY</option>
+              <option value="low">LOW PRIORITY</option>
+              <option value="min">MINIMAL PRIORITY</option>
+            </select>
+          </div>
+
+          <div id="inputContainer" className="flex flex-col gap-1">
+            <label>Status</label>
+            <select
+              required
+              value={ticketForm.status}
+              onChange={handleOnChange}
+              name="status"
+              className="p-2"
+            >
+              <option value="">Select an option</option>
+              <option value="open">OPEN</option>
+              <option value="inProgress">IN PROGRESS</option>
+              <option value="closed">CLOSED</option>
+            </select>
+          </div>
+
+          <div>
+            <button
+              onClick={() => setVisible(false)}
+              className="cursor-pointer hover:bg-green-400 h-10 font-bold bg-[#97f0cf]  "
+              type="submit"
+            >
+              Cancel
+            </button>
+
+            <button
+              className="cursor-pointer hover:bg-green-400 h-10 font-bold bg-[#97f0cf]  "
+              type="submit"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
       </Dialog>
     </div>
   );

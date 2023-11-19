@@ -1,6 +1,4 @@
-const Joi = require("joi");
-
-const validatePayload = (schema) => {
+const validateTicketPayload = (schema) => {
   return async (req, res, next) => {
     try {
       await schema.validateAsync(req.body);
@@ -14,4 +12,4 @@ const validatePayload = (schema) => {
   };
 };
 
-module.exports = validatePayload;
+module.exports = validateTicketPayload;

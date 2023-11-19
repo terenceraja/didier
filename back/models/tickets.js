@@ -5,10 +5,10 @@ const ticketSchema = mongoose.Schema({
   ticketNumber: Number,
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
   surname: String,
-  creationDate: String,
+  creationDate: { type: Date, default: Date.now },
   problem: String,
   priority: String,
-  status: String,
+  status: { type: String, default: "open" },
 });
 
 const Todo = mongoose.model("tickets", ticketSchema);

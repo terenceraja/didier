@@ -79,9 +79,9 @@ function HomePage() {
             />
           </div>
 
-          <div id="inputContainer&button" className="flex flex-col ">
+          <div id="inputContainer&button" className="flex flex-col">
             <label>Ticket Number</label>
-            <div id="inputContainer" className="flex">
+            <div id="inputContainer&Btn" className="flex gap-1">
               <input
                 className="h-10 p-5"
                 type="text"
@@ -92,7 +92,7 @@ function HomePage() {
                 required
               />
               <button
-                className="cursor-pointer hover:bg-green-400 h-10 font-bold bg-[#97f0cf]  "
+                className="cursor-pointer hover:bg-[#12ffa8] border-dashed h-11 font-bold bg-[#97f0cf]  "
                 onClick={handleGenerate}
                 type="button"
               >
@@ -133,7 +133,7 @@ function HomePage() {
             </select>
           </div>
 
-          <div id="inputContainer" className="flex flex-col gap-1">
+          {/* <div id="inputContainer" className="flex flex-col gap-1">
             <label>Status</label>
             <select
               required
@@ -144,22 +144,22 @@ function HomePage() {
             >
               <option value="">Select an option</option>
               <option value="open">OPEN</option>
-              <option value="inProgress">IN PROGRESS</option>
+              <option value="progress">IN PROGRESS</option>
               <option value="closed">CLOSED</option>
             </select>
-          </div>
+          </div> */}
 
-          <div>
+          <div id="Cancel&Submit" className="flex gap-2 self-center ">
             <button
               onClick={() => setVisible(false)}
-              className="cursor-pointer hover:bg-green-400 h-10 font-bold bg-[#97f0cf]  "
+              className="cursor-pointer hover:bg-[#12ffa8] w-20 h-10 font-bold bg-[#97f0cf]  "
               type="submit"
             >
               Cancel
             </button>
 
             <button
-              className="cursor-pointer hover:bg-green-400 h-10 font-bold bg-[#97f0cf]  "
+              className="cursor-pointer hover:bg-[#12ffa8] w-20 h-10 font-bold bg-[#97f0cf]  "
               type="submit"
             >
               Submit

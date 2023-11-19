@@ -3,8 +3,6 @@ import { useState } from "react";
 
 function LoginPage() {
   const [formInfo, setFormInfo] = useState({
-    name: "",
-    surname: "",
     email: "",
     password: "",
   });
@@ -14,7 +12,7 @@ function LoginPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("click");
-    fetch("http://localhost:3000/users/create", {
+    fetch("http://localhost:3000/users/signIn", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formInfo),
@@ -52,26 +50,6 @@ function LoginPage() {
           onSubmit={handleSubmit}
         >
           <div id="inputContainer" className="flex flex-col gap-1">
-            <label>Name</label>
-            <input
-              className="h-10 p-5"
-              name="name"
-              onChange={handleOnChange}
-              required
-            />
-          </div>
-
-          <div id="inputContainer" className="flex flex-col gap-1">
-            <label>Surname</label>
-            <input
-              className="h-10 p-5"
-              name="surname"
-              onChange={handleOnChange}
-              required
-            />
-          </div>
-
-          <div id="inputContainer" className="flex flex-col gap-1">
             <label>Email</label>
             <input
               className="h-10 p-5"
@@ -96,7 +74,7 @@ function LoginPage() {
             className="cursor-pointer hover:bg-green-400 h-10 font-bold bg-[#97f0cf]  "
             type="submit"
           >
-            SIGN UP
+            SIGN IN
           </button>
         </form>
         {error && <span className="text-red-400">{error}</span>}

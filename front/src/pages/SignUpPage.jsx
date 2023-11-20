@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+
 // import reactLogo from "./assets/react.svg";
 
-function LoginPage() {
+function SignUpPage() {
   const [formInfo, setFormInfo] = useState({
     name: "",
     surname: "",
@@ -98,6 +100,12 @@ function LoginPage() {
           >
             SIGN UP
           </button>
+          <Link
+            to="/signIn"
+            className="no-underline font-bold  hover:underline"
+          >
+            Sign in
+          </Link>
         </form>
         {error && <span className="text-red-400">{error}</span>}
       </div>
@@ -105,4 +113,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default SignUpPage;

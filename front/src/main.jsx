@@ -6,8 +6,10 @@ import { PrimeReactProvider, PrimeReactContext } from "primereact/api";
 
 // PAGES IMPORTS
 
-import LoginPage from "./pages/LoginPage.jsx";
-import HomePage from "./pages/HomePage.jsx";
+import SignInPage from "./pages/SignInPage.jsx";
+import SignUpPage from "./pages/SignUpPage.jsx";
+import LogPage from "./pages/LogPage.jsx";
+import IndexPage from "./pages/IndexPage.jsx";
 
 // REACT ROUTER IMPORTS
 import {
@@ -20,8 +22,10 @@ import {
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
-      <Route path="/" element={<LoginPage />} />
-      <Route path="home" element={<HomePage />} />
+      <Route path="/" element={<IndexPage />} />
+      <Route path="log" element={<LogPage />} />
+      <Route path="signIn" element={<SignInPage />} />
+      <Route path="signUp" element={<SignUpPage />} />
     </Route>
   )
 );

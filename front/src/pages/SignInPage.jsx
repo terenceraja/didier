@@ -11,6 +11,7 @@ function SignInPage() {
   console.log(error);
   const navigate = useNavigate();
 
+  // ON SUBMITION
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("click");
@@ -26,11 +27,14 @@ function SignInPage() {
           console.log(response.message);
         } else {
           console.log(response);
-          navigate("/log");
+          let id = response.data._id;
+
+          navigate(`/${id}`);
         }
       });
   };
 
+  // ONCHANGE INPUTS
   const handleOnChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;

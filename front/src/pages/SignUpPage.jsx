@@ -14,6 +14,7 @@ function SignUpPage() {
   console.log(error);
   const navigate = useNavigate();
 
+  // ON SUBMITION
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("click");
@@ -29,13 +30,14 @@ function SignUpPage() {
           console.log(response.message);
         } else {
           console.log(response);
-          let token = response.data.token;
-          console.log(token);
-          navigate(`/${token}`);
+          let id = response.data._id;
+
+          navigate(`/${id}`);
         }
       });
   };
 
+  // ONCHANGE INPUTS
   const handleOnChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;

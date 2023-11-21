@@ -11,6 +11,6 @@ const ticketSchema = mongoose.Schema({
   status: { type: String, default: "open" },
 });
 
-const Todo = mongoose.model("tickets", ticketSchema);
+const Ticket = mongoose.model("tickets", ticketSchema);
 
-module.exports = Todo;
+module.exports = Ticket;

@@ -1,5 +1,6 @@
 const validateTicketPayload = (schema) => {
   return async (req, res, next) => {
+    console.log(req.body);
     try {
       await schema.validateAsync(req.body);
       next();
@@ -7,7 +8,7 @@ const validateTicketPayload = (schema) => {
       console.error("User validation error:", error);
       res
         .status(400)
-        .json({ error: "Validation failed", message: error.message });
+        .json({ error: "Ticket Validation failed", message: error.message });
     }
   };
 };

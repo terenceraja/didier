@@ -44,13 +44,10 @@ function LogPage() {
   };
 
   return (
-    <div
-      id="mainContainer"
-      className="flex justify-center items-center h-screen"
-    >
-      <div className="flex flex-wrap justify-content-center gap-2 mb-2">
+    <div id="mainContainer" className=" p-2 flex  h-screen">
+      <div className="">
         <Button
-          label="Left"
+          label="Create Ticket"
           icon="pi pi-arrow-right"
           onClick={() => show("left")}
           className="p-button-help"
@@ -92,7 +89,7 @@ function LogPage() {
                 required
               />
               <button
-                className="cursor-pointer hover:bg-[#12ffa8] border-dashed h-11 font-bold bg-[#97f0cf]  "
+                className="cursor-pointer hover:bg-[#12ffa8] border-dashed h-11 font-bold bg-[#97f0cf]   "
                 onClick={handleGenerate}
                 type="button"
               >
@@ -126,10 +123,10 @@ function LogPage() {
               <option value="">Select an option</option>
 
               <option value="critical">CRITICAL</option>
-              <option value="high">HIGH PRIORITY</option>
-              <option value="medium">MEDIUM PRIORITY</option>
-              <option value="low">LOW PRIORITY</option>
-              <option value="min">MINIMAL PRIORITY</option>
+              <option value="high">HIGH</option>
+              <option value="medium">MEDIUM</option>
+              <option value="low">LOW</option>
+              <option value="min">MINIMAL</option>
             </select>
           </div>
 

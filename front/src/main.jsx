@@ -16,6 +16,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
+  Routes,
   RouterProvider,
 } from "react-router-dom";
 
@@ -23,7 +24,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
       <Route path="/" element={<IndexPage />} />
-      <Route path="log" element={<LogPage />} />
+      <Route path=":userToken" element={<LogPage />} />
       <Route path="signIn" element={<SignInPage />} />
       <Route path="signUp" element={<SignUpPage />} />
     </Route>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // import reactLogo from "./assets/react.svg";
 
 function SignInPage() {
@@ -9,6 +9,7 @@ function SignInPage() {
   });
   const [error, setError] = useState(null);
   console.log(error);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -25,6 +26,7 @@ function SignInPage() {
           console.log(response.message);
         } else {
           console.log(response);
+          navigate("/log");
         }
       });
   };

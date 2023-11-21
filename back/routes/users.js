@@ -1,21 +1,55 @@
 var express = require("express");
 var router = express.Router();
 require("../models/connection");
-const ticketSchema = require("../validations/userValidation.js");
+const {
+  signInSchema,
+  signUpSchema,
+} = require("../validations/userValidation.js");
 const User = require("../models/users");
+
+const bcrypt = require("bcrypt");
+const uid2 = require("uid2");
+
 const validateUserPayload = require("../middleware/userValidator.js");
 
 // Create User
-router.post("/create", validateUserPayload(ticketSchema), async (req, res) => {
-  let mongoResponse = await User.findOne({ email: response.email });
+router.post("/signUp", validateUserPayload(signUpSchema), async (req, res) => {
+  let mongoResponse = await User.findOne({ email: req.body.email });
   if (mongoResponse === null) {
-    const newUser = new User(req.body);
+    const hash = bcrypt.hashSync(req.body.password, 10);
+    const token = uid2(32);
+    const newUser = new User({
+      name: req.body.name,
+      surname: req.body.surname,
+      email: req.body.email,
+      password: hash,
+      token: token,
+    });
     const savedUser = await newUser.save();
     res.status(200).json({ message: "User is registered!", data: savedUser });
   } else {
     res
       .status(200)
       .json({ error: "Data base check", message: "User already exists!" });
+  }
+});
+
+router.post("/signIn", validateUserPayload(signInSchema), async (req, res) => {
+  let mongoResponse = await User.findOne({ email: req.body.email });
+  if (mongoResponse === null) {
+    res
+      .status(200)
+      .json({ error: "user check", message: "User not found", status: false });
+  } else {
+    if (bcrypt.compareSync(req.body.password, mongoResponse.password)) {
+      res.json({ message: "password is correct", status: true });
+    } else {
+      res.json({
+        error: "password check",
+        message: "password is incorrect",
+        status: false,
+      });
+    }
   }
 });
 

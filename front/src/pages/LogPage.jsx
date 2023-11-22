@@ -5,13 +5,15 @@ import { Button } from "primereact/button";
 import { useParams } from "react-router-dom";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { Dropdown } from "primereact/dropdown";
 
 import TicketCard from "../components/TicketCard";
 
 function LogPage() {
   const [tickets, setTickets] = useState(null);
-  const [ticketDetail, setTicketDetail] = useState(null);
-  const [modal, setModal] = useState(null);
+  const [disabledToggle, setDisabledToggle] = useState(true);
+  console.log(disabledToggle);
+
   const [response, SetResponse] = useState("");
   const [visible, setVisible] = useState(false);
   const [visible2, setVisible2] = useState(false);
@@ -22,6 +24,17 @@ function LogPage() {
     problem: "",
     priority: "",
   });
+  const [ticketForm2, setTicketForm2] = useState({
+    title: "",
+    priority: "",
+    status: "",
+    ticketNumber: "",
+  });
+  console.log("YOLO", ticketForm2);
+
+  const [statuses] = useState(["open", "inProgress", "closed"]);
+  const [priorities] = useState(["critical", "high", "medium", "low", "min"]);
+
   const { userId } = useParams();
 
   // ON RENDER
@@ -37,10 +50,10 @@ function LogPage() {
     fetchAllTickets();
   }, []);
 
-  // ON SUBMITION
+  // ON SUBMITION FOR CREATE
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("submit");
+
     fetch(`http://localhost:3000/tickets/create/${userId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -62,11 +75,49 @@ function LogPage() {
       });
   };
 
+  // ON SUBMITION FOR UPDATE
+  const handleSubmit2 = (e) => {
+    e.preventDefault();
+
+    fetch(`http://localhost:3000/tickets/update`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: ticketForm2.title,
+        ticketNumber: ticketForm2.ticketNumber,
+        priority: ticketForm2.priority,
+        status: ticketForm2.status,
+      }),
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response);
+        // SetResponse(response.message);
+        // setTicketForm({
+        //   title: "",
+        //   problem: "",
+        //   priority: "",
+        // });
+        // setTimeout(() => {
+        //   SetResponse("");
+        //   setVisible(false);
+        // }, 1500);
+      });
+  };
+
   // ONCHANGE INPUTS
   const handleOnChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     setTicketForm((prev) => {
+      return { ...prev, [name]: value };
+    });
+  };
+
+  const handleOnChange2 = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setTicketForm2((prev) => {
       return { ...prev, [name]: value };
     });
   };
@@ -77,7 +128,9 @@ function LogPage() {
       title: "",
       problem: "",
       priority: "",
+      status: "",
     });
+    setDisabledToggle(true);
     setVisible(false);
     setVisible2(false);
   };
@@ -94,11 +147,75 @@ function LogPage() {
     setVisible2(true);
   };
 
+  // ON HIDE MODEL
+
+  const handleHide = () => {
+    setTicketForm({
+      title: "",
+      problem: "",
+      priority: "",
+      status: "",
+    });
+    setDisabledToggle(true);
+    setVisible(false);
+    setVisible2(false);
+  };
+
   // ROW SELECTION TABLE
   const handleSelectRow = (event) => {
-    setTicketDetail(event.value);
+    setTicketForm2(event.value);
     show2("right");
-    console.log("data", event.value);
+  };
+
+  //  STATUS FILTER
+  const statusRowFilterTemplate = (options) => {
+    return (
+      <Dropdown
+        value={options.value}
+        options={statuses}
+        placeholder="Select One"
+        className="p-column-filter"
+        showClear
+        onChange={(e) => options.filterApplyCallback(e.value)}
+        style={{ minWidth: "12rem" }}
+      />
+    );
+  };
+
+  //  PRIORITY FILTER
+  const priorityRowFilterTemplate = (options) => {
+    return (
+      <Dropdown
+        value={options.value}
+        options={priorities}
+        placeholder="Select One"
+        className="p-column-filter"
+        showClear
+        onChange={(e) => options.filterApplyCallback(e.value)}
+        style={{ minWidth: "12rem" }}
+      />
+    );
+  };
+
+  // DATE FORMAT
+  const formatDate = (value) => {
+    const date = new Date(value);
+
+    return date.toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+  const dateBodyTemplate = (rowData) => {
+    return formatDate(rowData.creationDate);
+  };
+
+  const handleEdit = (e) => {
+    if (disabledToggle) {
+      e.preventDefault();
+      setDisabledToggle((prev) => !prev);
+    }
   };
 
   return (
@@ -120,36 +237,43 @@ function LogPage() {
         selectionMode="single"
         onSelectionChange={(e) => handleSelectRow(e)}
         tableStyle={{ minWidth: "100vw" }}
+        filterDisplay="row"
       >
         <Column
           field="ticketNumber"
           header="Ticket Number"
-          sortable
-          style={{ width: "25%" }}
+          style={{ width: "5%" }}
         ></Column>
         <Column
           field="title"
           header="Title"
           sortable
-          style={{ width: "25%" }}
+          style={{ width: "5%" }}
         ></Column>
         <Column
           field="priority"
           header="Priority"
           sortable
-          style={{ width: "25%" }}
+          filter
+          showFilterMenu={false}
+          filterElement={priorityRowFilterTemplate}
+          style={{ width: "5%" }}
         ></Column>
         <Column
           field="status"
           header="Status"
           sortable
-          style={{ width: "25%" }}
+          filter
+          showFilterMenu={false}
+          filterElement={statusRowFilterTemplate}
+          style={{ width: "5%" }}
         ></Column>
         <Column
           field="creationDate"
           header="Date"
           sortable
-          style={{ width: "25%" }}
+          style={{ width: "5%" }}
+          body={dateBodyTemplate}
         ></Column>
       </DataTable>
 
@@ -158,7 +282,7 @@ function LogPage() {
         visible={visible}
         position={position}
         style={{ width: "50vw" }}
-        onHide={() => setVisible(false)}
+        onHide={handleHide}
         draggable={false}
         resizable={false}
       >
@@ -170,7 +294,6 @@ function LogPage() {
               type="text"
               name="title"
               onChange={handleOnChange}
-              required
             />
           </div>
 
@@ -179,7 +302,6 @@ function LogPage() {
             <textarea
               className="p-2"
               onChange={handleOnChange}
-              required
               name="problem"
               rows="5"
               cols="33"
@@ -205,22 +327,6 @@ function LogPage() {
               <option value="min">MINIMAL</option>
             </select>
           </div>
-
-          {/* <div id="inputContainer" className="flex flex-col gap-1">
-            <label>Status</label>
-            <select
-              required
-              value={ticketForm.status}
-              onChange={handleOnChange}
-              name="status"
-              className="p-2"
-            >
-              <option value="">Select an option</option>
-              <option value="open">OPEN</option>
-              <option value="progress">IN PROGRESS</option>
-              <option value="closed">CLOSED</option>
-            </select>
-          </div> */}
 
           <div
             id="Cancel&Submit"
@@ -250,35 +356,90 @@ function LogPage() {
         visible={visible2}
         position={position2}
         style={{ width: "50vw" }}
-        onHide={() => setVisible2(false)}
+        onHide={handleHide}
         draggable={false}
         resizable={false}
       >
-        <div id="inputContainer" className="flex flex-col gap-1">
-          <label>Title</label>
-          <input
-            className="h-10 p-5"
-            type="text"
-            name="title"
-            onChange={handleOnChange}
-            required
-          />
-        </div>
+        <form className="flex flex-col gap-5" onSubmit={handleSubmit2}>
+          <div id="inputContainer" className="flex flex-col gap-1">
+            <label>Title</label>
+            <input
+              value={ticketForm2.title}
+              readOnly
+              className="h-10 p-5"
+              type="text"
+              name="title"
+            />
+          </div>
 
-        <div id="inputContainer" className="flex flex-col gap-1">
-          <label>Problem</label>
-          <textarea
-            className="p-2"
-            onChange={handleOnChange}
-            required
-            name="problem"
-            rows="5"
-            cols="33"
-            value={ticketForm.problem}
-          >
-            Describe the problem
-          </textarea>
-        </div>
+          <div id="inputContainer" className="flex flex-col gap-1">
+            <label>Problem</label>
+            <textarea
+              readOnly
+              className="p-2"
+              value={ticketForm2.problem}
+              name="problem"
+              rows="5"
+              cols="33"
+            >
+              Describe the problem
+            </textarea>
+          </div>
+
+          <div id="inputContainer" className="flex flex-col gap-1">
+            <label>Priority</label>
+            <select
+              disabled={disabledToggle}
+              required
+              onChange={handleOnChange2}
+              name="priority"
+              className="p-2 font-bold"
+              value={ticketForm2.priority}
+            >
+              <option value="critical">CRITICAL</option>
+              <option value="high">HIGH</option>
+              <option value="medium">MEDIUM</option>
+              <option value="low">LOW</option>
+              <option value="min">MINIMAL</option>
+            </select>
+          </div>
+
+          <div id="inputContainer" className="flex flex-col gap-1">
+            <label>Status</label>
+            <select
+              required
+              disabled={disabledToggle}
+              value={ticketForm2.status}
+              onChange={handleOnChange2}
+              name="status"
+              className="p-2 font-bold "
+            >
+              <option value="open">OPEN</option>
+              <option value="progress">IN PROGRESS</option>
+              <option value="closed">CLOSED</option>
+            </select>
+
+            <div
+              id="Cancel&Submit"
+              className="flex items-center gap-2 self-center "
+            >
+              <button
+                className="cursor-pointer hover:bg-[#12ffa8] w-25 h-10 font-bold bg-[#97f0cf]  "
+                type={disabledToggle ? "button" : "submit"}
+                onClick={(e) => handleEdit(e)}
+              >
+                {disabledToggle ? "EDIT" : "CONFIRM & SUBMIT ?"}
+              </button>
+              <button
+                className="cursor-pointer hover:bg-[#12ffa8] w-20 h-10 font-bold bg-[#97f0cf]  "
+                type="button"
+                onClick={handleCancel}
+              >
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </form>
       </Dialog>
     </div>
   );

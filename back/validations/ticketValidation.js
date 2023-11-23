@@ -8,7 +8,6 @@ const createTicketSchema = Joi.object({
 
 const updateTicketSchema = Joi.object({
   title: Joi.string().alphanum().max(50).required(),
-
   priority: Joi.string().required(),
   status: Joi.string().required(),
   ticketNumber: Joi.number().required(),

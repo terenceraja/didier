@@ -30,9 +30,8 @@ function SignUpPage() {
           console.log(response.message);
         } else {
           console.log(response);
-          let id = response.data._id;
 
-          navigate(`/${id}`);
+          navigate(`/signIn`);
         }
       });
   };

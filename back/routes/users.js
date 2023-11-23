@@ -6,7 +6,7 @@ const {
   signUpSchema,
 } = require("../validations/userValidation.js");
 const User = require("../models/users");
-
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const validateUserPayload = require("../middleware/userValidator.js");
@@ -39,10 +39,16 @@ router.post("/signIn", validateUserPayload(signInSchema), async (req, res) => {
       .json({ error: "user check", message: "User not found", status: false });
   } else {
     if (bcrypt.compareSync(req.body.password, mongoResponse.password)) {
+      const token = jwt.sign(
+        { id: mongoResponse._Id, email: mongoResponse.email },
+        "secret"
+      );
+
       res.json({
         message: "password is correct",
         status: true,
         data: mongoResponse,
+        token: token,
       });
     } else {
       res.json({

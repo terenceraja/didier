@@ -12,7 +12,6 @@ import TicketCard from "../components/TicketCard";
 function LogPage() {
   const [tickets, setTickets] = useState(null);
   const [disabledToggle, setDisabledToggle] = useState(true);
-  console.log(disabledToggle);
 
   const [response, SetResponse] = useState("");
   const [visible, setVisible] = useState(false);
@@ -23,30 +22,24 @@ function LogPage() {
     title: "",
     problem: "",
     priority: "",
-  });
-  const [ticketForm2, setTicketForm2] = useState({
-    title: "",
-    priority: "",
-    status: "",
     ticketNumber: "",
   });
-  console.log("YOLO", ticketForm2);
 
   const [statuses] = useState(["open", "inProgress", "closed"]);
   const [priorities] = useState(["critical", "high", "medium", "low", "min"]);
 
   const { userId } = useParams();
 
+  const fetchAllTickets = () => {
+    fetch(`http://localhost:3000/tickets/allTickets`)
+      .then((response) => response.json())
+      .then((response) => {
+        console.log("fetchall", response.data);
+        setTickets(response.data);
+      });
+  };
   // ON RENDER
   useEffect(() => {
-    const fetchAllTickets = () => {
-      fetch(`http://localhost:3000/tickets/allTickets/${userId}`)
-        .then((response) => response.json())
-        .then((response) => {
-          setTickets(response.data);
-        });
-    };
-
     fetchAllTickets();
   }, []);
 
@@ -57,7 +50,11 @@ function LogPage() {
     fetch(`http://localhost:3000/tickets/create/${userId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(ticketForm),
+      body: JSON.stringify({
+        title: ticketForm.title,
+        problem: ticketForm.problem,
+        priority: ticketForm.priority,
+      }),
     })
       .then((response) => response.json())
       .then((response) => {
@@ -70,6 +67,7 @@ function LogPage() {
         });
         setTimeout(() => {
           SetResponse("");
+          fetchAllTickets();
           setVisible(false);
         }, 1500);
       });
@@ -78,30 +76,33 @@ function LogPage() {
   // ON SUBMITION FOR UPDATE
   const handleSubmit2 = (e) => {
     e.preventDefault();
+    setDisabledToggle(true);
 
     fetch(`http://localhost:3000/tickets/update`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title: ticketForm2.title,
-        ticketNumber: ticketForm2.ticketNumber,
-        priority: ticketForm2.priority,
-        status: ticketForm2.status,
+        title: ticketForm.title,
+        ticketNumber: ticketForm.ticketNumber,
+        priority: ticketForm.priority,
+        status: ticketForm.status,
       }),
     })
       .then((response) => response.json())
       .then((response) => {
         console.log(response);
-        // SetResponse(response.message);
-        // setTicketForm({
-        //   title: "",
-        //   problem: "",
-        //   priority: "",
-        // });
-        // setTimeout(() => {
-        //   SetResponse("");
-        //   setVisible(false);
-        // }, 1500);
+        SetResponse(response.message);
+        setTicketForm({
+          title: "",
+          problem: "",
+          priority: "",
+          ticketNumber: "",
+        });
+        setTimeout(() => {
+          SetResponse("");
+          fetchAllTickets();
+          setVisible2(false);
+        }, 1500);
       });
   };
 
@@ -110,14 +111,6 @@ function LogPage() {
     const name = e.target.name;
     const value = e.target.value;
     setTicketForm((prev) => {
-      return { ...prev, [name]: value };
-    });
-  };
-
-  const handleOnChange2 = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setTicketForm2((prev) => {
       return { ...prev, [name]: value };
     });
   };
@@ -163,7 +156,7 @@ function LogPage() {
 
   // ROW SELECTION TABLE
   const handleSelectRow = (event) => {
-    setTicketForm2(event.value);
+    setTicketForm(event.value);
     show2("right");
   };
 
@@ -247,6 +240,12 @@ function LogPage() {
         <Column
           field="title"
           header="Title"
+          sortable
+          style={{ width: "5%" }}
+        ></Column>
+        <Column
+          field="userId.email"
+          header="Created by"
           sortable
           style={{ width: "5%" }}
         ></Column>
@@ -352,7 +351,7 @@ function LogPage() {
       </Dialog>
 
       <Dialog
-        header={`Ticket Detail`}
+        header={`Ticket Number : ${ticketForm.ticketNumber}`}
         visible={visible2}
         position={position2}
         style={{ width: "50vw" }}
@@ -364,7 +363,7 @@ function LogPage() {
           <div id="inputContainer" className="flex flex-col gap-1">
             <label>Title</label>
             <input
-              value={ticketForm2.title}
+              value={ticketForm.title}
               readOnly
               className="h-10 p-5"
               type="text"
@@ -377,7 +376,7 @@ function LogPage() {
             <textarea
               readOnly
               className="p-2"
-              value={ticketForm2.problem}
+              value={ticketForm.problem}
               name="problem"
               rows="5"
               cols="33"
@@ -391,10 +390,10 @@ function LogPage() {
             <select
               disabled={disabledToggle}
               required
-              onChange={handleOnChange2}
+              onChange={handleOnChange}
               name="priority"
               className="p-2 font-bold"
-              value={ticketForm2.priority}
+              value={ticketForm.priority}
             >
               <option value="critical">CRITICAL</option>
               <option value="high">HIGH</option>
@@ -409,8 +408,8 @@ function LogPage() {
             <select
               required
               disabled={disabledToggle}
-              value={ticketForm2.status}
-              onChange={handleOnChange2}
+              value={ticketForm.status}
+              onChange={handleOnChange}
               name="status"
               className="p-2 font-bold "
             >
@@ -437,6 +436,7 @@ function LogPage() {
               >
                 CANCEL
               </button>
+              <span className="font-bold text-green-400">{response}</span>
             </div>
           </div>
         </form>

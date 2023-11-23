@@ -42,9 +42,9 @@ router.post(
   }
 );
 
-router.get("/allTickets/:userId", async (req, res) => {
+router.get("/allTickets", async (req, res) => {
   console.log(req.params.userId);
-  const mongoResponse = await Ticket.find({ userId: req.params.userId });
+  const mongoResponse = await Ticket.find().populate("userId");
   res.status(200).json({
     message: "all tickets",
     data: mongoResponse,

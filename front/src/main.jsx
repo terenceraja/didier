@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import { PrimeReactProvider, PrimeReactContext } from "primereact/api";
-import { AuthProvider } from "react-auth-kit";
+// import { AuthProvider } from "react-auth-kit";
 
 // PAGES IMPORTS
 

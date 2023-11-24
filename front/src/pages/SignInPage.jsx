@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
-import useSignIn from "react-auth-kit";
+// import useSignIn from "react-auth-kit";
 // import reactLogo from "./assets/react.svg";
 
 function SignInPage() {
@@ -9,38 +9,30 @@ function SignInPage() {
     email: "",
     password: "",
   });
-  const [error, setError] = useState(null);
-  console.log(error);
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
-  const signIn = useSignIn();
+  // const signIn = useSignIn();
 
   // ON SUBMITION
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:3000/users/signIn", {
+    const res = await fetch("http://localhost:3000/users/signIn", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formInfo),
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        // signIn({
-        // token : response.data.token
+    });
+    const data = await res.json();
+    console.log(data);
 
-        // })
-
-        if (response.error) {
-          setError(response.message);
-          console.log(response.message);
-        } else {
-          console.log(response);
-          let id = response.data._id;
-
-          navigate(`/${id}`);
-        }
-      });
+    if (data.error) {
+      setError(data.message);
+    } else {
+      let id = data.userId;
+      navigate(`/${id}`);
+    }
   };
 
   // ONCHANGE INPUTS

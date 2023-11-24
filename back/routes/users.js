@@ -13,48 +13,46 @@ const validateUserPayload = require("../middleware/userValidator.js");
 
 // Create User
 router.post("/signUp", validateUserPayload(signUpSchema), async (req, res) => {
-  let mongoResponse = await User.findOne({ email: req.body.email });
-  if (mongoResponse === null) {
+  const { email, name, surname } = req.body;
+  let user = await User.findOne({ email: email });
+  if (!user) {
     const hash = bcrypt.hashSync(req.body.password, 10);
     const newUser = new User({
-      name: req.body.name,
-      surname: req.body.surname,
-      email: req.body.email,
+      name: name,
+      surname: surname,
+      email: email,
       password: hash,
     });
     const savedUser = await newUser.save();
-    res.status(200).json({ message: "User is registered!", data: savedUser });
-  } else {
+
     res
       .status(200)
-      .json({ error: "Data base check", message: "User already exists!" });
+      .json({ message: "User is registered!", userId: savedUser._id });
+  } else {
+    res
+      .status(201)
+      .json({ error: "user check", message: "User already exists!" });
   }
 });
 
 router.post("/signIn", validateUserPayload(signInSchema), async (req, res) => {
-  let mongoResponse = await User.findOne({ email: req.body.email });
-  if (mongoResponse === null) {
-    res
-      .status(200)
-      .json({ error: "user check", message: "User not found", status: false });
+  const { password, email } = req.body;
+  let user = await User.findOne({ email: email });
+  if (!user) {
+    res.status(200).json({ error: "user check", message: "User not found" });
   } else {
-    if (bcrypt.compareSync(req.body.password, mongoResponse.password)) {
-      const token = jwt.sign(
-        { id: mongoResponse._Id, email: mongoResponse.email },
-        "secret"
-      );
+    if (bcrypt.compareSync(password, user.password)) {
+      const token = jwt.sign({ id: user._id, email: user.email }, "secret");
 
       res.json({
         message: "password is correct",
-        status: true,
-        data: mongoResponse,
+        userId: user._id,
         token: token,
       });
     } else {
       res.json({
         error: "password check",
         message: "password is incorrect",
-        status: false,
       });
     }
   }

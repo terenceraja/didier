@@ -7,11 +7,10 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
 
-import TicketCard from "../components/TicketCard";
-
 function LogPage() {
   const [tickets, setTickets] = useState(null);
   const [disabledToggle, setDisabledToggle] = useState(true);
+  const [disabledButton, setDisabledButton] = useState(false);
 
   const [response, SetResponse] = useState("");
   const [visible, setVisible] = useState(false);
@@ -30,24 +29,24 @@ function LogPage() {
 
   const { userId } = useParams();
 
-  const fetchAllTickets = () => {
-    fetch(`http://localhost:3000/tickets/allTickets`)
-      .then((response) => response.json())
-      .then((response) => {
-        console.log("fetchall", response.data);
-        setTickets(response.data);
-      });
+  // FETCHING ALL TICKETS FUNCTION
+  const fetchAllTickets = async () => {
+    const res = await fetch(`http://localhost:3000/tickets/allTickets`);
+    const data = await res.json();
+    console.log("fetchall", data);
+    setTickets(data.data);
   };
-  // ON RENDER
+
+  // ON RENDER CALL FETCH ALL TICKETS
   useEffect(() => {
     fetchAllTickets();
   }, []);
 
   // ON SUBMITION FOR CREATE
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    fetch(`http://localhost:3000/tickets/create/${userId}`, {
+    setDisabledButton(true);
+    const res = await fetch(`http://localhost:3000/tickets/create/${userId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -55,30 +54,31 @@ function LogPage() {
         problem: ticketForm.problem,
         priority: ticketForm.priority,
       }),
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        console.log(response);
-        SetResponse(response.message);
-        setTicketForm({
-          title: "",
-          problem: "",
-          priority: "",
-        });
-        setTimeout(() => {
-          SetResponse("");
-          fetchAllTickets();
-          setVisible(false);
-        }, 1500);
-      });
+    });
+    const data = await res.json();
+
+    console.log(data);
+    SetResponse(data.message);
+    setTicketForm({
+      title: "",
+      problem: "",
+      priority: "",
+    });
+    setTimeout(() => {
+      SetResponse("");
+      fetchAllTickets();
+      setVisible(false);
+      setDisabledButton(false);
+    }, 1500);
   };
 
   // ON SUBMITION FOR UPDATE
-  const handleSubmit2 = (e) => {
+  const handleSubmit2 = async (e) => {
     e.preventDefault();
-    setDisabledToggle(true);
 
-    fetch(`http://localhost:3000/tickets/update`, {
+    setDisabledButton(true);
+
+    const res = await fetch(`http://localhost:3000/tickets/update`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -87,23 +87,24 @@ function LogPage() {
         priority: ticketForm.priority,
         status: ticketForm.status,
       }),
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        console.log(response);
-        SetResponse(response.message);
-        setTicketForm({
-          title: "",
-          problem: "",
-          priority: "",
-          ticketNumber: "",
-        });
-        setTimeout(() => {
-          SetResponse("");
-          fetchAllTickets();
-          setVisible2(false);
-        }, 1500);
-      });
+    });
+    const data = await res.json();
+
+    console.log(data);
+    SetResponse(data.message);
+    setTicketForm({
+      title: "",
+      problem: "",
+      priority: "",
+      ticketNumber: "",
+    });
+    setTimeout(() => {
+      SetResponse("");
+      fetchAllTickets();
+      setVisible2(false);
+      setDisabledButton(false);
+      setDisabledToggle(true);
+    }, 1500);
   };
 
   // ONCHANGE INPUTS
@@ -335,6 +336,7 @@ function LogPage() {
               onClick={handleCancel}
               className="cursor-pointer hover:bg-[#12ffa8] w-20 h-10 font-bold bg-[#97f0cf]  "
               type="button"
+              disabled={disabledButton}
             >
               Cancel
             </button>
@@ -342,6 +344,7 @@ function LogPage() {
             <button
               className="cursor-pointer hover:bg-[#12ffa8] w-20 h-10 font-bold bg-[#97f0cf]  "
               type="submit"
+              disabled={disabledButton}
             >
               Submit
             </button>
@@ -426,12 +429,14 @@ function LogPage() {
                 className="cursor-pointer hover:bg-[#12ffa8] w-25 h-10 font-bold bg-[#97f0cf]  "
                 type={disabledToggle ? "button" : "submit"}
                 onClick={(e) => handleEdit(e)}
+                disabled={disabledButton}
               >
                 {disabledToggle ? "EDIT" : "CONFIRM & SUBMIT ?"}
               </button>
               <button
                 className="cursor-pointer hover:bg-[#12ffa8] w-20 h-10 font-bold bg-[#97f0cf]  "
                 type="button"
+                disabled={disabledButton}
                 onClick={handleCancel}
               >
                 CANCEL

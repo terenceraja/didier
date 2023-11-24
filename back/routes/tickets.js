@@ -8,7 +8,6 @@ const {
 
 const Ticket = require("../models/tickets");
 const validateTicketPayload = require("../middleware/ticketValidator.js");
-
 const GenerateNumber = require("../utils/GenerateNumber");
 
 // Create Ticket
@@ -18,37 +17,35 @@ router.post(
   async (req, res) => {
     try {
       let ticketNumber = GenerateNumber();
+      const { title, problem, priority } = req.body;
+      const { userId } = req.params;
 
       const newTicket = new Ticket({
-        title: req.body.title,
+        title: title,
         ticketNumber: ticketNumber,
-        userId: req.params.userId,
-        problem: req.body.problem,
-        priority: req.body.priority,
+        userId: userId,
+        problem: problem,
+        priority: priority,
       });
       const savedTicket = await newTicket.save();
       res.status(200).json({
         message: "Ticket is registered!",
         data: savedTicket,
-        status: true,
       });
-    } catch (error) {
+    } catch (err) {
       res.status(400).json({
-        error: error,
+        error: err,
         message: "Something went wrong",
-        status: false,
       });
     }
   }
 );
 
 router.get("/allTickets", async (req, res) => {
-  console.log(req.params.userId);
-  const mongoResponse = await Ticket.find().populate("userId");
+  const tickets = await Ticket.find().populate("userId");
   res.status(200).json({
     message: "all tickets",
-    data: mongoResponse,
-    status: true,
+    data: tickets,
   });
 });
 
@@ -56,27 +53,28 @@ router.put(
   "/update",
   validateTicketPayload(updateTicketSchema),
   async (req, res) => {
+    const { ticketNumber, status, priority } = req.body;
+
     try {
-      const mongoResponse = await Ticket.updateOne(
-        { ticketNumber: req.body.ticketNumber },
+      const updatedTicket = await Ticket.updateOne(
+        { ticketNumber: ticketNumber },
         {
           $set: {
-            status: req.body.status,
-            priority: req.body.priority,
+            status: status,
+            priority: priority,
           },
         }
       );
 
       res.status(200).json({
         message: "Ticket Updated !",
-        data: mongoResponse,
+        data: updatedTicket,
         status: true,
       });
     } catch (error) {
       res.status(400).json({
         error: error,
         message: "Something went wrong",
-        status: false,
       });
     }
   }

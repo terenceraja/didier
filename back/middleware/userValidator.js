@@ -4,10 +4,9 @@ const validateUserPayload = (schema) => {
       await schema.validateAsync(req.body);
       next();
     } catch (error) {
-      console.error("User validation error:", error);
       res
         .status(400)
-        .json({ error: "Validation failed", message: error.message });
+        .json({ error: "User validation failed", message: error.message });
     }
   };
 };

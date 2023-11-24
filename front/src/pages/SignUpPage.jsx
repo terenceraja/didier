@@ -11,29 +11,25 @@ function SignUpPage() {
     password: "",
   });
   const [error, setError] = useState(null);
-  console.log(error);
   const navigate = useNavigate();
 
   // ON SUBMITION
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("click");
-    fetch("http://localhost:3000/users/signUp", {
+
+    const res = await fetch("http://localhost:3000/users/signUp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formInfo),
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        if (response.error) {
-          setError(response.message);
-          console.log(response.message);
-        } else {
-          console.log(response);
+    });
 
-          navigate(`/signIn`);
-        }
-      });
+    const data = await res.json();
+    console.log(data);
+    if (data.error) {
+      setError(data.message);
+    } else {
+      navigate(`/signIn`);
+    }
   };
 
   // ONCHANGE INPUTS

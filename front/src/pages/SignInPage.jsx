@@ -74,6 +74,7 @@ function SignInPage() {
               type="password"
               name="password"
               onChange={handleOnChange}
+              autoComplete="on"
               required
             />
           </div>

@@ -21,15 +21,15 @@ function SignUpPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formInfo),
+      credentials: "include",
     });
 
     const data = await res.json();
     console.log(data);
     if (data.error) {
       setError(data.message);
-    } else {
-      navigate(`/signIn`);
     }
+    // navigate(`/signIn`);
   };
 
   // ONCHANGE INPUTS
@@ -91,6 +91,7 @@ function SignUpPage() {
               type="password"
               name="password"
               onChange={handleOnChange}
+              autoComplete="on"
               required
             />
           </div>

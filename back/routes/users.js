@@ -24,7 +24,7 @@ router.post("/signUp", validateUserPayload(signUpSchema), async (req, res) => {
     });
     const savedUser = await newUser.save();
     const token = jwt.sign({ userId: savedUser._id }, "secret");
-    res.cookie("jwt", token, { secure: true, maxAge: 3600000, httpOnly: true });
+    res.cookie("jwt", token, { maxAge: 3600000, httpOnly: true });
 
     res
       .status(200)
